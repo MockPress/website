@@ -1,0 +1,13 @@
+{
+  "presets": [
+    "@babel/preset-env",
+    [
+      "@babel/preset-react",
+      {
+        "runtime": "automatic" // jsx를 변환하는 플러그인들을 자동으로 포함시켜준다는 의이미다.
+      }
+    ],
+    "@babel/preset-typescript"
+  ],
+  "plugins": []
+}
