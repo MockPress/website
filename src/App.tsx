@@ -1,9 +1,15 @@
+import Editor from "./Editor";
 import "./main.css";
 
 const App: React.FC = () => {
   return (
-    <div className="flex bg-slate-100 h-20">
-      <span className="">HELLO</span>
+    <div className="bg-slate-100">
+      <Editor
+        value={"Initial"}
+        onChange={(value) => {
+          console.log(value);
+        }}
+      />
     </div>
   );
 };
