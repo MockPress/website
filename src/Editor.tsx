@@ -3,8 +3,9 @@ import {
   Completion,
   type CompletionContext,
 } from "@codemirror/autocomplete";
+import { indentWithTab } from "@codemirror/commands";
 import { javascript } from "@codemirror/lang-javascript";
-import { type ViewUpdate } from "@codemirror/view";
+import { type ViewUpdate, keymap } from "@codemirror/view";
 import { basicSetup, EditorView } from "codemirror";
 import { useEffect, useRef } from "react";
 
@@ -37,6 +38,7 @@ const Editor: React.FC<EditorProps> = ({ className, value, onChange }) => {
         EditorView.lineWrapping,
         javascript(),
         autos,
+        keymap.of([indentWithTab]),
       ],
       parent: ref.current ?? undefined,
     });
