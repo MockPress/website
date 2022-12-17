@@ -1,6 +1,9 @@
-import { CompletionContext } from "@codemirror/autocomplete";
+import {
+  autocompletion,
+  Completion,
+  type CompletionContext,
+} from "@codemirror/autocomplete";
 import { javascript } from "@codemirror/lang-javascript";
-import { json } from "@codemirror/lang-json";
 import { type ViewUpdate } from "@codemirror/view";
 import { basicSetup, EditorView } from "codemirror";
 import { useEffect, useRef } from "react";
@@ -9,17 +12,9 @@ type EditorProps = {
   className?: string;
   value: string;
   onChange: (value: string, viewUpdate: ViewUpdate) => void;
-  editable?: boolean;
-  language: "javascript" | "json";
 };
 
-const Editor: React.FC<EditorProps> = ({
-  className,
-  value,
-  onChange,
-  editable = true,
-  language,
-}) => {
+const Editor: React.FC<EditorProps> = ({ className, value, onChange }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -31,21 +26,18 @@ const Editor: React.FC<EditorProps> = ({
       }
     });
 
-    const extensions = [
-      basicSetup,
-      listener,
-      EditorView.editable.of(editable),
-      EditorView.lineWrapping,
-    ];
-
-    if (language === "javascript") {
-      extensions.push(javascript());
-    } else if (language === "json") {
-      extensions.push(json());
-    }
+    const autos = autocompletion({
+      override: [mockPressAutoComplete],
+    });
 
     const view = new EditorView({
-      extensions,
+      extensions: [
+        basicSetup,
+        listener,
+        EditorView.lineWrapping,
+        javascript(),
+        autos,
+      ],
       parent: ref.current ?? undefined,
     });
 
@@ -66,6 +58,79 @@ const Editor: React.FC<EditorProps> = ({
   }, [value]);
 
   return <div className={className} ref={ref} />;
+};
+
+const mockPressAutoComplete = (context: CompletionContext) => {
+  let word = context.matchBefore(/\w*/);
+  if (word === null) return null;
+
+  if (word.from == word.to && !context.explicit) return null;
+
+  return {
+    from: word.from,
+    options: [
+      {
+        label: "generate",
+        type: "function",
+        apply: "generate({\n\n}, 10)",
+        info: "generate json based schema",
+      },
+      {
+        label: "mock.autoIncrement",
+        type: "function",
+        apply: "mock.autoIncrement(startPoint),",
+        info: "Generates an auto incremented index, based on the loopIndex of the generator",
+      },
+      {
+        label: "mock.date",
+        type: "function",
+        apply: "mock.date(startDate, endDate),",
+        info: "Generates a random date in the range of the given parameters",
+      },
+      {
+        label: "mock.image",
+        type: "function",
+        apply: "mock.image(width, height),",
+        info: "Generates a random Image of the given size. Utilizes the images created by https://picsum.photos/",
+      },
+      {
+        label: "mock.integer",
+        type: "function",
+        apply: "mock.integer(min, max),",
+        info: "Generates a random integer in the given range",
+      },
+      {
+        label: "mock.koreanAddress",
+        type: "function",
+        apply: "mock.koreanAddress(),",
+        info: "Generates a random South Korean address. Generated address follow the basic rules of the South Korean address system. However, generated addresses are fake and do not exist in the real world",
+      },
+      {
+        label: "mock.koreanName",
+        type: "function",
+        apply: "mock.koreanName(),",
+        info: "Generates a random Korean name. The options consist of popular male and female baby names between 2008-2021",
+      },
+      {
+        label: "mock.koreanSentence",
+        type: "function",
+        apply: "mock.koreanSentence('short' | 'medium' | 'long'),",
+        info: "Generates a random korean sentence",
+      },
+      {
+        label: "mock.koreanWord",
+        type: "function",
+        apply: "mock.koreanWord(),",
+        info: "Generates a random korean word",
+      },
+      {
+        label: "mock.money",
+        type: "function",
+        apply: "mock.money(min, max, interval),",
+        info: "Generates a random amount of money in the given range",
+      },
+    ],
+  };
 };
 
 export default Editor;
