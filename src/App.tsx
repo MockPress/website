@@ -1,6 +1,7 @@
 import Editor from "./Editor";
 import Viewer from "./Viewer";
 import "./main.css";
+import saveToFile from "./utils/saveToFile";
 import { generate, mock } from "mockpress";
 import { useRef, useState } from "react";
 
@@ -16,7 +17,7 @@ const App: React.FC = () => {
   const handleGenerateButtonClick = () => {
     const cmd = codeRef.current;
     if (!cmd) {
-      alert("명령어를 입력해 주세요");
+      alert("please make a schema first");
       return;
     }
     window.generate = generate;
@@ -27,13 +28,20 @@ const App: React.FC = () => {
     delete window.mock;
   };
   const handleResetButtonClick = () => {
-    codeRef.current = "";
+    codeRef.current = initialCode;
     forceUpdate({});
   };
   const handleCopyToClipboardButtonClick = () => {
     window.navigator.clipboard.writeText(resultOfGenerate).then(() => {
       alert("Copy Complete!");
     });
+  };
+  const handleDownloadButtonClick = () => {
+    if (resultOfGenerate.length === 0) {
+      alert("please generate data first !");
+      return;
+    }
+    saveToFile("mock.json", resultOfGenerate);
   };
 
   return (
@@ -111,7 +119,7 @@ const App: React.FC = () => {
               <button type="button" onClick={handleCopyToClipboardButtonClick}>
                 Copy To Clipboard
               </button>
-              <button type="button" onClick={handleGenerateButtonClick}>
+              <button type="button" onClick={handleDownloadButtonClick}>
                 Download
               </button>
             </div>
