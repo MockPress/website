@@ -61,10 +61,12 @@
 
     "paths": {
       "@components/*": ["components/*"]
-    }
+    },
+
+    "typeRoots": ["src/custom-types"]
   },
 
-  "include": ["src", "src/styled-jsx.d.ts"]
+  "include": ["src"]
   // ts가 인식하고 컴파일할 파일의 경로를 지정합니다.
   // 현재 src폴더만 ts를 사용할것이기 때문에, src를 넣어줍니다.
 }
