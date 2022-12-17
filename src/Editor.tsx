@@ -1,14 +1,25 @@
+import { CompletionContext } from "@codemirror/autocomplete";
 import { javascript } from "@codemirror/lang-javascript";
+import { json } from "@codemirror/lang-json";
 import { type ViewUpdate } from "@codemirror/view";
 import { basicSetup, EditorView } from "codemirror";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type EditorProps = {
+  className?: string;
   value: string;
   onChange: (value: string, viewUpdate: ViewUpdate) => void;
+  editable?: boolean;
+  language: "javascript" | "json";
 };
 
-const Editor: React.FC<EditorProps> = ({ value, onChange }) => {
+const Editor: React.FC<EditorProps> = ({
+  className,
+  value,
+  onChange,
+  editable = true,
+  language,
+}) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -20,8 +31,21 @@ const Editor: React.FC<EditorProps> = ({ value, onChange }) => {
       }
     });
 
+    const extensions = [
+      basicSetup,
+      listener,
+      EditorView.editable.of(editable),
+      EditorView.lineWrapping,
+    ];
+
+    if (language === "javascript") {
+      extensions.push(javascript());
+    } else if (language === "json") {
+      extensions.push(json());
+    }
+
     const view = new EditorView({
-      extensions: [basicSetup, javascript(), listener],
+      extensions,
       parent: ref.current ?? undefined,
     });
 
@@ -41,7 +65,7 @@ const Editor: React.FC<EditorProps> = ({ value, onChange }) => {
     };
   }, [value]);
 
-  return <div ref={ref} />;
+  return <div className={className} ref={ref} />;
 };
 
 export default Editor;
