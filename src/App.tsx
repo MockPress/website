@@ -104,7 +104,7 @@ const App: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="p-2 min-h-[70vh]">
+          <div className="p-2 max-h-[70vh]">
             <Editor
               value={codeRef.current}
               onChange={(value) => {
@@ -124,7 +124,7 @@ const App: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="p-2 border-r-2 min-h-[70vh]">
+          <div className="p-2 border-r-2 max-h-[70vh] overflow-y-scroll">
             <Viewer value={resultOfGenerate} />
           </div>
         </div>
