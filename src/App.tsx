@@ -5,9 +5,22 @@ import saveToFile from "./utils/saveToFile";
 import { generate, mock } from "mockpress";
 import { useRef, useState } from "react";
 
-const initialCode = `generate({
-  id: mock.autoIncrement(),
-}, 10)`;
+const initialCode =
+  "generate({\n" +
+  "  id: mock.autoIncrement(),\n" +
+  '  introduce: mock.koreanSentence("short"),\n' +
+  "  name: mock.koreanName(),\n" +
+  "  hello: (current, loopIndex) => { // custom function is allowed\n" +
+  "    return `Hello my name is ${current.name}`;\n" +
+  "  },\n" +
+  "  hobby: {\n" +
+  "    cost: mock.money(1000, 5000, 500),\n" +
+  "    name: mock.koreanWord(),\n" +
+  "    introduce: (current, loopIndex) => { // current can access anywhere\n" +
+  "      return `Hobby of ${current.name} is ${current.hobby.name}. And cost is ${current.hobby.cost}`\n" +
+  "    }\n" +
+  "  }\n" +
+  "}, 10);";
 
 const App: React.FC = () => {
   const codeRef = useRef<string>(initialCode);
@@ -23,7 +36,7 @@ const App: React.FC = () => {
     window.generate = generate;
     window.mock = mock;
     const result = eval(cmd) as Record<string, any>;
-    setResultOfGenerate(JSON.stringify(result, null, "\t"));
+    setResultOfGenerate(JSON.stringify(result, null, 2));
     delete window.generate;
     delete window.mock;
   };
