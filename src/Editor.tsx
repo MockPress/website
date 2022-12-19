@@ -6,6 +6,7 @@ import {
 import { indentWithTab } from "@codemirror/commands";
 import { javascript } from "@codemirror/lang-javascript";
 import { type ViewUpdate, keymap } from "@codemirror/view";
+import classNames from "classnames";
 import { basicSetup, EditorView } from "codemirror";
 import { useEffect, useRef } from "react";
 
@@ -59,7 +60,7 @@ const Editor: React.FC<EditorProps> = ({ className, value, onChange }) => {
     };
   }, [value]);
 
-  return <div className={className} ref={ref} />;
+  return <div className={classNames(className, "text-base")} ref={ref} />;
 };
 
 const mockPressAutoComplete = (context: CompletionContext) => {
