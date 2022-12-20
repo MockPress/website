@@ -1,7 +1,9 @@
+import DocViewer from "./DocViewer";
 import CloseIcon from "./assets/close-icon.svg";
-import { MOCKS } from "./constants";
+import useGetDocJSON from "./hooks/useGetDocJSON";
+import tsDocParserWithCache from "./utils/tsDocParser";
 import classNames from "classnames";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useEffect, useMemo, useState } from "react";
 
 type DocsProps = {
   isOpen: boolean;
@@ -12,18 +14,39 @@ const Docs: React.FC<DocsProps> = ({
   isOpen,
   onCloseButtonClick: handleCloseButtonClick,
 }) => {
-  const [detailInfo, setDetailInfo] = useState(MOCKS[0]["detail"]);
-  const handleListItemClick = (detail: string) => () => {
-    setDetailInfo(detail);
+  const { mockDoc, utilDoc } = useGetDocJSON();
+  const [activeApiName, setActiveApiName] = useState<string | null>(null);
+  const [activeDocType, setActiveDocType] = useState<"mock" | "util">("mock");
+  const activeDoc = activeDocType === "mock" ? mockDoc : utilDoc;
+
+  useEffect(() => {
+    if (mockDoc.length === 0) return;
+    const { name } = mockDoc[0];
+    setActiveApiName(name);
+  }, [mockDoc]);
+
+  const activeDocComment = useMemo(() => {
+    const result = activeDoc.find(({ name }) => name === activeApiName);
+    if (result) {
+      return tsDocParserWithCache(result.name, result.docComment);
+    }
+    return null;
+  }, [activeApiName]);
+
+  const handleApiItemClick = (apiName: string) => () => {
+    activeDoc
+      .filter(({ name }) => name === apiName)
+      .map(({ name, docComment: docCommentStr }) => {
+        setActiveApiName(name);
+      });
   };
-  const [activeDoc, setActiveDoc] = useState<"mock" | "util">("mock");
-  const handleMockButtonClick = () => setActiveDoc("mock");
-  const handleUtilButtonClick = () => setActiveDoc("util");
+  const handleMockButtonClick = () => setActiveDocType("mock");
+  const handleUtilButtonClick = () => setActiveDocType("util");
 
   return (
     <div className="self absolute right-0 top-0 bottom-0 bg-zinc-100">
       <div className="flex h-full">
-        <div className="relative h-full bg-zinc-200 px-6 pt-8 w-[22vw] shadow-[inset_rgba(108,109,111,0.36)_-3px_-6px_12px_2px]">
+        <div className="relative h-full bg-zinc-200 px-6 pt-8 w-[25vw] shadow-[inset_rgba(108,109,111,0.36)_-3px_-6px_12px_2px]">
           <div>
             <button
               type="button"
@@ -32,21 +55,21 @@ const Docs: React.FC<DocsProps> = ({
             >
               <img src={CloseIcon} />
             </button>
-            {detailInfo}
+            {activeDocComment && <DocViewer docComment={activeDocComment} />}
           </div>
         </div>
-        <div className="h-full px-8 w-[28vw]">
+        <div className="h-full px-8 w-[25vw]">
           <div className="flex pb-4">
             <Switch
               className="grow"
-              active={activeDoc === "mock"}
+              active={activeDocType === "mock"}
               onClick={handleMockButtonClick}
             >
               Mock
             </Switch>
             <Switch
               className="grow"
-              active={activeDoc === "util"}
+              active={activeDocType === "util"}
               onClick={handleUtilButtonClick}
             >
               Util
@@ -54,14 +77,15 @@ const Docs: React.FC<DocsProps> = ({
           </div>
           <div>
             <ul>
-              {MOCKS.map((mock, index) => {
+              {activeDoc.map(({ name }, index) => {
                 return (
-                  <li
-                    key={index}
-                    onClick={handleListItemClick(mock.detail)}
-                    className="pb-4"
-                  >
-                    <MockItem title={mock.title} subTitle={mock.subTitle} />
+                  <li key={index} className="pb-4">
+                    <ApiItem
+                      title={name}
+                      subTitle={""}
+                      active={activeApiName === name}
+                      onClick={handleApiItemClick(name)}
+                    />
                   </li>
                 );
               })}
@@ -90,16 +114,29 @@ const Docs: React.FC<DocsProps> = ({
   );
 };
 
-type MockItemProps = {
+type ApiItemProps = {
   title: string;
   subTitle: string;
+  active: boolean;
+  onClick: MouseEventHandler<HTMLButtonElement>;
 };
-const MockItem: React.FC<MockItemProps> = ({ title, subTitle }) => {
+const ApiItem: React.FC<ApiItemProps> = ({
+  title,
+  subTitle,
+  active,
+  onClick: handleClick,
+}) => {
+  const cn = classNames("w-full", "text-left", { active });
   return (
-    <div className="self">
+    <button type="button" className={cn} onClick={handleClick}>
       <h3 className="text-xl mb-2">{title}</h3>
       <p className="text-right">{subTitle}</p>
-    </div>
+      <style jsx>{`
+        button.active {
+          color: red;
+        }
+      `}</style>
+    </button>
   );
 };
 

@@ -67,3 +67,14 @@ export const MOCKS: MockItemType[] = [
     detail: "money - detail",
   },
 ];
+
+export const NODE_TYPE = {
+  CodeSpan: "CodeSpan",
+  ErrorText: "ErrorText",
+  EscapedText: "EscapedText",
+  FencedCode: "FencedCode",
+  LinkTag: "LinkTag",
+  Paragraph: "Paragraph",
+  PlainText: "PlainText",
+  SoftBreak: "SoftBreak",
+};
