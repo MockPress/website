@@ -11,7 +11,7 @@ import { useRef, useState } from "react";
 const App: React.FC = () => {
   const codeRef = useRef<string>(INITIAL_CODE);
   const [_, forceUpdate] = useState({});
-  const [isDocsOpen, setIsDocsOpen] = useState(true);
+  const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [resultOfGenerate, setResultOfGenerate] = useState<string>("");
 
   const handleGenerateButtonClick = () => {
