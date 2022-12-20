@@ -9,5 +9,12 @@
     ],
     "@babel/preset-typescript"
   ],
-  "plugins": []
+  "plugins": [
+    [
+      "styled-jsx/babel",
+      {
+        "plugins": ["styled-jsx-plugin-sass"]
+      }
+    ]
+  ]
 }
