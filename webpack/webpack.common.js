@@ -28,6 +28,10 @@ module.exports = {
         exclude: /node_modules/, // node_modules를 제외하고
         type: "asset/resource", // asset/resource는 webpack5 에서 url-loader, file-loader대신 지원하는 기능입니다
       },
+      {
+        test: /\.svg/,
+        type: "asset/inline",
+      },
     ],
   },
   plugins: [

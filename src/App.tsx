@@ -1,30 +1,17 @@
+/// <reference types="styled-jsx/global" />
+import Docs from "./Docs";
 import Editor from "./Editor";
 import Viewer from "./Viewer";
+import { INITIAL_CODE } from "./constants";
 import "./main.css";
 import saveToFile from "./utils/saveToFile";
 import { generate, mock } from "mockpress";
 import { useRef, useState } from "react";
 
-const initialCode =
-  "generate({\n" +
-  "  id: mock.autoIncrement(),\n" +
-  '  introduce: mock.koreanSentence("short"),\n' +
-  "  name: mock.koreanName(),\n" +
-  "  hello: (current, loopIndex) => { // custom function is allowed\n" +
-  "    return `Hello my name is ${current.name}`;\n" +
-  "  },\n" +
-  "  hobby: {\n" +
-  "    cost: mock.money(1000, 5000, 500),\n" +
-  "    name: mock.koreanWord(),\n" +
-  "    introduce: (current, loopIndex) => { // current can access anywhere\n" +
-  "      return `Hobby of ${current.name} is ${current.hobby.name}. And cost is ${current.hobby.cost}`\n" +
-  "    }\n" +
-  "  }\n" +
-  "}, 10);";
-
 const App: React.FC = () => {
-  const codeRef = useRef<string>(initialCode);
+  const codeRef = useRef<string>(INITIAL_CODE);
   const [_, forceUpdate] = useState({});
+  const [isDocsOpen, setIsDocsOpen] = useState(true);
   const [resultOfGenerate, setResultOfGenerate] = useState<string>("");
 
   const handleGenerateButtonClick = () => {
@@ -41,7 +28,7 @@ const App: React.FC = () => {
     delete window.mock;
   };
   const handleResetButtonClick = () => {
-    codeRef.current = initialCode;
+    codeRef.current = INITIAL_CODE;
     forceUpdate({});
   };
   const handleCopyToClipboardButtonClick = () => {
@@ -56,9 +43,15 @@ const App: React.FC = () => {
     }
     saveToFile("mock.json", resultOfGenerate);
   };
+  const handleDocsButtonClick = () => {
+    setIsDocsOpen((prev) => !prev);
+  };
+  const handleCloseDocsButtonClick = () => {
+    setIsDocsOpen(false);
+  };
 
   return (
-    <div className="">
+    <div>
       <div className="fixed top-0 left-0 right-0 z-10 border-b bg-white drop-shadow">
         <div className="flex justify-between items-center py-2 px-4">
           <div className="flex gap-4 items-center">
@@ -69,12 +62,9 @@ const App: React.FC = () => {
               />
               <b className="black">Mockpress</b>
             </a>
-            <a
-              href="https://gleeful-cendol-4eaacd.netlify.app/"
-              target="_blank"
-            >
+            <button type="button" onClick={handleDocsButtonClick}>
               Docs
-            </a>
+            </button>
           </div>
           <div className="flex gap-4">
             <a
@@ -105,42 +95,52 @@ const App: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex pt-[45px] border-b">
-        <div className="w-1/2 p-2 border-r">
-          <div className="p-2 border-b">
-            <div className="flex gap-4">
-              <button type="button" onClick={handleGenerateButtonClick}>
-                Generate
-              </button>
-              <button type="button" onClick={handleResetButtonClick}>
-                Reset
-              </button>
+      <div className="h-[52px]" />
+      <div className="relative">
+        <div className="flex border-b">
+          <div className="w-1/2 p-2 border-r">
+            <div className="p-2 border-b">
+              <div className="flex gap-4">
+                <button type="button" onClick={handleGenerateButtonClick}>
+                  Generate
+                </button>
+                <button type="button" onClick={handleResetButtonClick}>
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div className="p-2 max-h-[70vh]">
+              <Editor
+                value={codeRef.current}
+                onChange={(value) => {
+                  codeRef.current = value;
+                }}
+              />
             </div>
           </div>
-          <div className="p-2 max-h-[70vh]">
-            <Editor
-              value={codeRef.current}
-              onChange={(value) => {
-                codeRef.current = value;
-              }}
-            />
-          </div>
-        </div>
-        <div className="w-1/2 p-2">
-          <div className="p-2 border-b">
-            <div className="flex gap-4">
-              <button type="button" onClick={handleCopyToClipboardButtonClick}>
-                Copy To Clipboard
-              </button>
-              <button type="button" onClick={handleDownloadButtonClick}>
-                Download
-              </button>
+          <div className="w-1/2 p-2">
+            <div className="p-2 border-b">
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={handleCopyToClipboardButtonClick}
+                >
+                  Copy To Clipboard
+                </button>
+                <button type="button" onClick={handleDownloadButtonClick}>
+                  Download
+                </button>
+              </div>
+            </div>
+            <div className="p-2 border-r-2 min-h-[70vh] max-h-[70vh] overflow-y-scroll">
+              <Viewer value={resultOfGenerate} />
             </div>
           </div>
-          <div className="p-2 border-r-2 max-h-[70vh] overflow-y-scroll">
-            <Viewer value={resultOfGenerate} />
-          </div>
         </div>
+        <Docs
+          isOpen={isDocsOpen}
+          onCloseButtonClick={handleCloseDocsButtonClick}
+        />
       </div>
     </div>
   );
