@@ -21,14 +21,16 @@ const DocViewer: React.FC<DocViewerProps> = ({ docComment }) => {
     // summary
     if (summarySection) {
       outputElements.push(
-        <Section title="Summary">{renderContainer(summarySection)}</Section>
+        <Section key={"summary"} title="Summary">
+          {renderContainer(summarySection)}
+        </Section>
       );
     }
 
     // remarks
     if (remarksBlock) {
       outputElements.push(
-        <Section title="Remarks">
+        <Section key="remarks" title="Remarks">
           {renderContainer(remarksBlock.content)}
         </Section>
       );
@@ -39,16 +41,16 @@ const DocViewer: React.FC<DocViewerProps> = ({ docComment }) => {
       const rows: React.ReactNode[] = params.blocks.map((block, index) => {
         return (
           <tr key={`param-${index}`}>
-            <td>{block.parameterName}</td>
-            <td>{renderContainer(block.content)}</td>
+            <td className="font-medium">{block.parameterName}</td>
+            <td className="px-4">{renderContainer(block.content)}</td>
           </tr>
         );
       });
 
       outputElements.push(
-        <Section title="Parameters">
+        <Section key="parameters" title="Parameters">
           {
-            <table className="doc-table">
+            <table className="doc-table w-full text-center">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -56,11 +58,6 @@ const DocViewer: React.FC<DocViewerProps> = ({ docComment }) => {
                 </tr>
               </thead>
               <tbody>{rows}</tbody>
-              <style jsx>{`
-                .doc-table {
-                  text-align: center;
-                }
-              `}</style>
             </table>
           }
         </Section>
@@ -70,7 +67,7 @@ const DocViewer: React.FC<DocViewerProps> = ({ docComment }) => {
     // returns
     if (returnsBlock) {
       outputElements.push(
-        <Section title="Return Value">
+        <Section key="returns" title="Return Value">
           {renderContainer(returnsBlock.content)}
         </Section>
       );
@@ -88,7 +85,9 @@ const DocViewer: React.FC<DocViewerProps> = ({ docComment }) => {
           exampleBlocks.length > 1 ? `Example ${index + 1}` : "Example";
 
         outputElements.push(
-          <Section title={heading}>{renderContainer(block.content)}</Section>
+          <Section key={`example-${index}`} title={heading}>
+            {renderContainer(block.content)}
+          </Section>
         );
       });
     }
@@ -96,10 +95,12 @@ const DocViewer: React.FC<DocViewerProps> = ({ docComment }) => {
     // see
     if (seeBlocks.length > 0) {
       const listItems = seeBlocks.map((block, index) => (
-        <li key={`item_${index}`}>{renderContainer(block.content)}</li>
+        <li key={`see-also-${index}`}>{renderContainer(block.content)}</li>
       ));
       outputElements.push(
-        <Section title="See Also">{<ul>{listItems}</ul>}</Section>
+        <Section key="see-also" title="See Also">
+          {<ul>{listItems}</ul>}
+        </Section>
       );
     }
 
@@ -175,7 +176,7 @@ const DocViewer: React.FC<DocViewerProps> = ({ docComment }) => {
     node: tsdoc.DocNode,
     key: string
   ): React.ReactNode => (
-    <pre>
+    <pre key={key}>
       <code>{(node as tsdoc.DocFencedCode).code}</code>
       <style jsx>
         {`
