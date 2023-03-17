@@ -5,7 +5,7 @@ import Viewer from "./Viewer";
 import { INITIAL_CODE } from "./constants";
 import "./main.css";
 import saveToFile from "./utils/saveToFile";
-import { generate, mock } from "mockpress";
+import { generate, mock, util } from "mockpress";
 import { useRef, useState } from "react";
 
 const App: React.FC = () => {
@@ -22,10 +22,12 @@ const App: React.FC = () => {
     }
     window.generate = generate;
     window.mock = mock;
+    window.util = util;
     const result = eval(cmd) as Record<string, any>;
     setResultOfGenerate(JSON.stringify(result, null, 2));
     delete window.generate;
     delete window.mock;
+    delete window.util;
   };
   const handleResetButtonClick = () => {
     codeRef.current = INITIAL_CODE;
