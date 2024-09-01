@@ -1,6 +1,5 @@
 import {
   autocompletion,
-  Completion,
   type CompletionContext,
 } from "@codemirror/autocomplete";
 import { indentWithTab } from "@codemirror/commands";

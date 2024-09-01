@@ -1,4 +1,3 @@
-import { DocComment } from "@microsoft/tsdoc";
 import { useEffect, useState } from "react";
 
 type DocType = {
