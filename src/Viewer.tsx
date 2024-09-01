@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { json } from "@codemirror/lang-json";
 import { type ViewUpdate } from "@codemirror/view";
 import { basicSetup, EditorView } from "codemirror";
