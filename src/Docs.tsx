@@ -36,7 +36,7 @@ const Docs: React.FC<DocsProps> = ({
   const handleApiItemClick = (apiName: string) => () => {
     activeDoc
       .filter(({ name }) => name === apiName)
-      .map(({ name, docComment: docCommentStr }) => {
+      .map(({ name }) => {
         setActiveApiName(name);
       });
   };
@@ -44,7 +44,7 @@ const Docs: React.FC<DocsProps> = ({
   const handleUtilButtonClick = () => setActiveDocType("util");
 
   return (
-    <div className="self absolute right-0 top-0 bottom-0 bg-zinc-100">
+    <div className={`self ${isOpen ? 'self-open' : 'self-closed'} absolute right-0 top-0 bottom-0 bg-zinc-100`}>
       <div className="flex h-full">
         <div className="relative h-full bg-zinc-200 px-6 pt-8 w-[25vw] shadow-[inset_rgba(108,109,111,0.36)_-3px_-6px_12px_2px]">
           <div>
@@ -100,13 +100,22 @@ const Docs: React.FC<DocsProps> = ({
             transition-property: transform;
             transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
             transition-duration: 500ms;
-            transform: translateX(${isOpen ? "0%" : "100%"});
           }
+          
+          .self-closed {
+            transform: translateX(100%);
+          }
+
+          .self-open {
+            transform: translateX(0%);
+          }
+
           .menu-item {
             border-bottom: 1px solid transparent;
-            &.active {
-              border-bottom-color: red;
-            }
+          }
+
+          .menu-item.active {
+            border-bottom-color: red;
           }
         `}
       </style>
@@ -132,7 +141,7 @@ const ApiItem: React.FC<ApiItemProps> = ({
       <h3 className="text-xl mb-2">{title}</h3>
       <p className="text-right">{subTitle}</p>
       <style jsx>{`
-        button.active {
+        .active {
           color: red;
         }
       `}</style>
@@ -162,10 +171,11 @@ const Switch: React.FC<SwitchProps> = ({
             color: gray;
             border-bottom: 1px solid transparent;
             transition: border-bottom 0.3s, color 0.2s;
-            &.active {
-              color: black;
-              border-bottom-color: red;
-            }
+          }
+
+          .active {
+            color: black;
+            border-bottom-color: red;
           }
         `}
       </style>

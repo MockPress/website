@@ -250,7 +250,7 @@ const DocViewer: React.FC<DocViewerProps> = ({ docComment }) => {
   };
 
   const renderSoftBreak = (
-    node: tsdoc.DocNode,
+    _: tsdoc.DocNode,
     key: string
   ): React.ReactNode => {
     return <React.Fragment key={key}> </React.Fragment>;
@@ -280,28 +280,6 @@ const Section: React.FC<SectionProps> = ({ title, children }) => {
       <DocHeading>{title}</DocHeading>
       {children}
     </div>
-  );
-};
-
-type CodeProps = {
-  children: React.ReactNode;
-};
-const Code: React.FC<CodeProps> = ({ children }) => {
-  return (
-    <code>
-      {children}
-      <style jsx>
-        {`
-          code {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            padding: 6px 10px;
-            border-radius: 3px;
-            overflow: auto;
-          }
-        `}
-      </style>
-    </code>
   );
 };
 
